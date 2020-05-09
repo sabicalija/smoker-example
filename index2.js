@@ -3,9 +3,11 @@
 
 const http = require("http");
 
-const homePage = (alarm) => {
-  return `
-  <html>
+function homePage(alarm) {
+  let home;
+  if (!alarm) {
+    home = `
+    <html>
     <head>
       <title>Smoker Test</title>
       <style>
@@ -16,7 +18,31 @@ const homePage = (alarm) => {
       div {
         background-color: green;
       }
-      .alarm {
+      </style>
+      <script>
+      function buttonHandler() {
+        console.log(window.location);
+        window.location.assign(window.location.origin + "/alarm-test")
+      }
+      </script>
+    </head>
+    <body>
+      <div">Alarm</div>
+      <button onclick="buttonHandler()">Test</button>
+    </body>
+  </html>
+  `;
+  } else {
+    home = `
+    <html>
+    <head>
+      <title>Smoker Test</title>
+      <style>
+      body {
+        display: flex;
+        flex-flow: column nowrap;
+      }
+      div {
         background-color: red;
       }
       </style>
@@ -28,12 +54,14 @@ const homePage = (alarm) => {
       </script>
     </head>
     <body>
-      <div class="${alarmState ? "alarm" : ""}">Alarm</div>
+      <div">Alarm</div>
       <button onclick="buttonHandler()">Test</button>
     </body>
   </html>
   `;
-};
+  }
+  return home;
+}
 
 let alarmState = false;
 
@@ -43,7 +71,8 @@ const server = http.createServer((req, res) => {
   console.log("DEBUG", url);
 
   if (url === "/alarm-test") {
-    console.log("DEBUG", "Alarm!!"); // Test funktion auslösen
+    console.log("DEBUG", "Alarm!!");
+    // Test funktion auslösen
     res.writeHead(302, { Location: "/" });
     return res.end();
   } else if (url === "/" || url === "/index.html") {
